@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"python3 daily-post.py --test --quote 1 --theme noir --url http://localhost:5175\",\"timeout\":120000,\"description\":\"Retry generating test image\"}",
+  "error": "Exit code 1\n==================================================\nConselho do Dia - Daily Post Script\n==================================================\n\nLoading conselhos...\nLoaded 1001 conselhos\n\nQuote #1: Elogie três pessoas todos os dias.\n\nGenerating image with theme 'noir'...\nGenerating image from: http://localhost:5175/api/generate?quote=Elogie+tr%C3%AAs+pessoas+todos+os+dias.&theme=noir&author=H.+Jackson+Brown%2C+Jr.&source=Pequeno+Manual+de+Instru%C3%A7%C3%B5es+para+a+Vida&number=1&marks=tr...",
+  "timestamp": "2026-05-27T19:11:21.070Z",
+  "retry_count": 2
+}

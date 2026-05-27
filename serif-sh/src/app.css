@@ -1,0 +1,386 @@
+@import "tailwindcss";
+
+/* === Instrument Serif Font Faces === */
+@font-face {
+  font-family: 'Instrument Serif';
+  src: url('/fonts/instrument-serif/InstrumentSerif-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Instrument Serif';
+  src: url('/fonts/instrument-serif/InstrumentSerif-Italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* === OpenRunde Font Faces === */
+@font-face {
+  font-family: 'Open Runde';
+  src: url('/fonts/open-runde/OpenRunde-Regular.woff2') format('woff2'),
+       url('/fonts/open-runde/OpenRunde-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Open Runde';
+  src: url('/fonts/open-runde/OpenRunde-Medium.woff2') format('woff2'),
+       url('/fonts/open-runde/OpenRunde-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Open Runde';
+  src: url('/fonts/open-runde/OpenRunde-Semibold.woff2') format('woff2'),
+       url('/fonts/open-runde/OpenRunde-Semibold.woff') format('woff');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Open Runde';
+  src: url('/fonts/open-runde/OpenRunde-Bold.woff2') format('woff2'),
+       url('/fonts/open-runde/OpenRunde-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* === Theme Configuration === */
+@theme {
+  /* Font families */
+  --font-open-runde: "Open Runde", system-ui, sans-serif;
+  /* Quote styling fonts */
+  --font-geist: "Geist", sans-serif;
+  --font-inter: "Inter", sans-serif;
+  --font-jetbrains-mono: "JetBrains Mono", monospace;
+  --font-playfair: "Playfair Display", serif;
+  --font-old-standard: "Old Standard TT", serif;
+  --font-instrument-serif: "Instrument Serif", serif;
+
+  /* Parchment colors */
+  --color-parchment-50: #fdfcf9;
+  --color-parchment-100: #f9f6ef;
+  --color-parchment-200: #f3ede0;
+  --color-parchment-300: #e8dcc7;
+  --color-parchment-400: #d4c4a8;
+  --color-parchment-500: #bfa882;
+  --color-parchment-600: #a38b62;
+  --color-parchment-700: #87714d;
+  --color-parchment-800: #6e5b41;
+  --color-parchment-900: #5c4c38;
+
+  /* Ink colors */
+  --color-ink-50: #f6f6f6;
+  --color-ink-100: #e7e7e7;
+  --color-ink-200: #d1d1d1;
+  --color-ink-300: #b0b0b0;
+  --color-ink-400: #888888;
+  --color-ink-500: #6d6d6d;
+  --color-ink-600: #5d5d5d;
+  --color-ink-700: #4f4f4f;
+  --color-ink-800: #454545;
+  --color-ink-900: #1a1a1a;
+  --color-ink-950: #0d0d0d;
+
+  /* Animations */
+  --animate-fade-in: fade-in 0.3s ease-out;
+  --animate-slide-up: slide-up 0.4s ease-out;
+
+  @keyframes fade-in {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+  @keyframes slide-up {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+}
+
+/* === Base Styles === */
+html {
+  font-family: var(--font-open-runde);
+}
+
+body {
+  min-height: 100vh;
+  @apply bg-parchment-50 text-ink-900;
+}
+
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+/* Custom scrollbar */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: theme('colors.parchment.400') transparent;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-parchment-300 rounded-full;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-parchment-400;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Selection */
+::selection {
+  @apply bg-parchment-300 text-ink-900;
+}
+
+/* Focus styles */
+*:focus-visible {
+  @apply outline-none ring-2 ring-parchment-500 ring-offset-2;
+}
+
+[contenteditable]:focus-visible {
+  @apply ring-0 ring-offset-0;
+}
+
+/* Transitions */
+.transition-theme {
+  @apply transition-all duration-300 ease-out;
+}
+
+/* Quote frame base styles */
+.quote-frame {
+  @apply relative overflow-hidden;
+}
+
+/* X themes: Inter + system UI stack (reads like X / Chirp; no Chirp font file) */
+.quote-card.style-x {
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.quote-card.style-x cite {
+  font-family: inherit;
+}
+
+/* Transparent pattern for no-background mode */
+.transparent-pattern {
+  background-image:
+    linear-gradient(45deg, #e5e5e5 25%, transparent 25%),
+    linear-gradient(-45deg, #e5e5e5 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #e5e5e5 75%),
+    linear-gradient(-45deg, transparent 75%, #e5e5e5 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+}
+
+/* Button styles */
+.btn {
+  @apply px-4 py-2 rounded-lg font-medium transition-all duration-200;
+  @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+}
+
+.btn-primary {
+  @apply bg-ink-900 text-parchment-50 hover:bg-ink-800;
+  @apply focus:ring-ink-500;
+}
+
+.btn-secondary {
+  @apply bg-parchment-200 text-ink-800 hover:bg-parchment-300;
+  @apply border border-parchment-300;
+}
+
+/* Input styles */
+.input {
+  @apply w-full px-4 py-3 rounded-lg border transition-all duration-200;
+  @apply bg-white border-parchment-300 text-ink-900;
+  @apply placeholder:text-ink-400;
+  @apply focus:border-parchment-500 focus:ring-2 focus:ring-parchment-200;
+}
+
+/* Textarea styles */
+.textarea {
+  @apply w-full px-4 py-3 rounded-lg border transition-all duration-200 resize-none;
+  @apply bg-white border-parchment-300 text-ink-900;
+  @apply placeholder:text-ink-400;
+  @apply focus:border-parchment-500 focus:ring-2 focus:ring-parchment-200;
+  font-family: var(--font-open-runde);
+}
+
+/* Theme card hover effect */
+.theme-card {
+  @apply relative cursor-pointer rounded-lg overflow-hidden transition-all duration-200;
+  @apply ring-2 ring-transparent hover:ring-parchment-400;
+}
+
+.theme-card.active {
+  @apply ring-ink-900;
+}
+
+/* Toast notification */
+.toast {
+  @apply fixed bottom-4 right-4 px-4 py-3 rounded-lg shadow-lg;
+  @apply bg-ink-900 text-parchment-50;
+  @apply animate-slide-up;
+}
+
+.card-shadow{
+  @apply shadow-[0px_0px_0px_1px_#0000000f,0px_1px_2px_-1px_#0000000f,0px_2px_4px_0px_#0000000a];
+}
+
+.shadow-custom{
+  @apply shadow-[0px_0px_0px_1px_inset_#e8dcc7,0px_1px_2px_-1px_#0000001a,0px_2px_4px_0px_#00000014];
+}
+
+ .border-shadow {
+  @apply shadow-[0px_0px_0px_1px_#0000000f,0px_1px_2px_-1px_#0000000f,0px_2px_4px_0px_#0000000a];
+}
+
+ .border-shadow-hover {
+  @apply shadow-[0px_0px_0px_1px_#0000001a,0px_1px_2px_-1px_#0000001a,0px_2px_4px_0px_#00000014];
+}
+
+.glassmorphism{
+  @apply bg-white/10 border border-white/20 backdrop-filter backdrop-blur-sm shadow-[1px_1px_2px_inset_rgba(80,80,80,0.2),-1px_-1px_2px_inset_rgba(80,80,80,0.2),-4px_4px_8px_2px_inset_rgba(3,7,18,0.1),4px_-4px_8px_2px_inset_rgba(3,7,18,0.1)]
+}
+
+/* === Shared Select Component Styles === */
+.select-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 32px;
+  padding: 0 0.5rem;
+  background: var(--color-parchment-50);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-size: 0.8125rem;
+}
+
+.select-trigger:hover {
+  background: var(--color-parchment-100);
+}
+
+.select-trigger .chevron {
+  width: 14px;
+  height: 14px;
+  opacity: 0.5;
+}
+
+.select-dropdown {
+  z-index: 100;
+  min-width: 180px;
+  overflow: hidden;
+  background: var(--color-parchment-50);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow-xs);
+}
+
+.select-dropdown--start[data-state="open"] {
+  transform-origin: bottom left;
+  animation: select-open 150ms cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.export-dropdown--open {
+  transform-origin: top right;
+  animation: select-open 150ms cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes select-open {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.options-viewport {
+  padding: 0.375rem;
+  overflow-y: auto;
+}
+
+.select-option {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0.375rem 0.5rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: background 0.1s ease;
+  background: transparent;
+  border: none;
+  text-align: left;
+}
+
+.select-option:hover {
+  background: var(--color-parchment-200);
+}
+
+.select-option[data-state="checked"],
+.select-option[data-state="checked"]:hover,
+.select-option-active,
+.select-option-active:hover {
+  background: var(--color-parchment-300);
+}
+
+.select-option[data-disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.option-content {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  width: 100%;
+}
+
+.option-label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  flex: 1;
+}
+
+.no-results {
+  padding: 0.75rem;
+  text-align: center;
+  font-size: 0.8125rem;
+  opacity: 0.5;
+}
+
+.select-group-heading {
+  padding: 0.375rem 0.5rem 0.125rem;
+  font-size: 0.6875rem;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.4;
+}

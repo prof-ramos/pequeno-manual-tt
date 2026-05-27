@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"cd /Users/gabrielramos/projetos/pessoal/pequeno-manual-tt/scripts && python daily-post.py --test --quote 1 --theme noir\",\"timeout\":120000,\"description\":\"Generate test image with quote numb...",
+  "error": "Exit code 127\n(eval):1: command not found: python",
+  "timestamp": "2026-05-27T19:09:32.984Z",
+  "retry_count": 1
+}
