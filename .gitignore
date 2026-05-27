@@ -29,3 +29,13 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Claude / OMC session files
+.claude/
+.omc/
+scripts/.claude/
+scripts/.omc/
+serif-sh/.claude/
+serif-sh/.omc/
+serif-sh/src/routes/api/.claude/
+serif-sh/src/routes/api/.omc/
