@@ -15,7 +15,7 @@ Este projeto combina um **gerador de imagens estilizadas** (SvelteKit + Playwrig
 
 Cada imagem é renderizada com tema `noir`, fonte `Playfair Display`, numeração `001 / 1001` e citação do livro — pronta para engajamento no X.
 
-![Preview](scripts/output/conselho-2026-05-27-1.png)
+![Preview](https://via.placeholder.com/1200x630/000000/FFFFFF?text=Conselho+do+Dia)
 
 ---
 
@@ -71,7 +71,7 @@ O projeto é dividido em duas partes:
 ```
 scripts/daily-post.py
     ↓ HTTP GET
-erif-sh/src/routes/api/generate/+server.ts
+serif-sh/src/routes/api/generate/+server.ts
     ↓ Playwright Chromium
 serif-sh/src/routes/+page.svelte (renderizado com query params)
     ↓ Screenshot .quote-frame
