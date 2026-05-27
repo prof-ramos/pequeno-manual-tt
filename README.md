@@ -1,138 +1,234 @@
-# Conselho do Dia - Automação
+# Pequeno Manual TT — Conselho do Dia
 
-Sistema completo para gerar e postar automaticamente conselhos diários do "Pequeno Manual de Instruções para a Vida" no X (Twitter).
+> Sistema completo para gerar imagens elegantes de conselhos do livro "Pequeno Manual de Instruções para a Vida" e postá-las automaticamente no X (Twitter).
 
-## Arquivos Criados/Modificados
+[![SvelteKit](https://img.shields.io/badge/SvelteKit-5.0-orange?logo=svelte)](https://kit.svelte.dev)
+[![Python](https://img.shields.io/badge/Python-3.12%2B-blue?logo=python)](https://python.org)
+[![Playwright](https://img.shields.io/badge/Playwright-Chromium-green?logo=playwright)](https://playwright.dev)
+[![License](https://img.shields.io/badge/License-MIT-lightgrey)](LICENSE)
 
-### 1. `serif-sh/src/lib/conselhos.json`
-Arquivo JSON com todas as 1001 frases do livro, numeradas de 1 a 1001.
+---
 
-### 2. `serif-sh/src/lib/conselhos.py`
-Versão Python do mesmo arquivo para uso no script de automação.
+## ✨ Visão Geral
 
-### 3. `serif-sh/src/routes/+page.svelte` (modificado)
-- Adicionado suporte a query parameters na URL:
-  - `?quote=texto do conselho`
-  - `?theme=noir` (ou qualquer outro tema válido)
-  - `?align=center` (left, center, right)
-  - `?padding=64`
-  - `?marks=true/false`
-  - `?bg=true/false`
-  - `?font=playfair` (opcional)
+Este projeto combina um **gerador de imagens estilizadas** (SvelteKit + Playwright) com um **script de automação** (Python) para criar e publicar diariamente conselhos do livro *Pequeno Manual de Instruções para a Vida*, de H. Jackson Brown, Jr.
 
-### 4. `serif-sh/src/routes/api/generate/+server.ts` (novo)
-Endpoint que usa Playwright para renderizar a página e gerar PNG.
-- **Método:** GET
-- **Parâmetros:** `quote`, `theme`, `author`, `align`, `padding`, `marks`, `bg`, `font`
-- **Retorna:** Imagem PNG
+Cada imagem é renderizada com tema `noir`, fonte `Playfair Display`, numeração `001 / 1001` e citação do livro — pronta para engajamento no X.
 
-### 5. `scripts/daily-post.py` (novo)
-Script Python para automação diária.
+![Preview](scripts/output/conselho-2026-05-27-1.png)
 
-### 6. `scripts/requirements.txt` (novo)
-Dependências Python.
+---
 
-## Instalação
+## 🚀 Quick Start
 
-### 1. Instalar dependências do projeto
+### 1. Clone e instale dependências
+
+```bash
+git clone https://github.com/prof-ramos/pequeno-manual-tt.git
+cd pequeno-manual-tt
+```
+
+### 2. Web app (serif-sh)
 
 ```bash
 cd serif-sh
 npm install
 npx playwright install chromium
-```
-
-### 2. Instalar dependências do script Python
-
-```bash
-cd scripts
-pip install -r requirements.txt
-```
-
-## Testando o Endpoint
-
-### 1. Iniciar o servidor de desenvolvimento
-
-```bash
-cd serif-sh
 npm run dev
 ```
 
-### 2. Testar o endpoint de geração
+O servidor iniciará em `http://localhost:5173`.
+
+### 3. Script Python (scripts)
 
 ```bash
-# Teste básico
-curl "http://localhost:5173/api/generate?quote=Elogie%20tr%C3%AAs%20pessoas%20todos%20os%20dias&theme=noir" -o teste.png
-
-# Teste com diferentes temas
-curl "http://localhost:5173/api/generate?quote=Elogie%20tr%C3%AAs%20pessoas%20todos%20os%20dias&theme=editorial" -o editorial.png
-curl "http://localhost:5173/api/generate?quote=Elogie%20tr%C3%AAs%20pessoas%20todos%20os%20dias&theme=x-dark" -o x-dark.png
+cd scripts
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
 ```
 
-### 3. Testar visualmente no navegador
-
-```
-http://localhost:5173/?quote=Elogie três pessoas todos os dias&theme=noir
-```
-
-## Script de Automação Diária
-
-### Configuração do Twitter/X API
-
-O script precisa das seguintes variáveis de ambiente:
+### 4. Teste a geração de imagem
 
 ```bash
-# Opção 1: Bearer Token (simplificado, apenas posting)
-export TWITTER_BEARER_TOKEN="seu_bearer_token_aqui"
-
-# Opção 2: OAuth 2.0 Client Credentials (para upload de mídia)
-export TWITTER_CLIENT_ID="seu_client_id"
-export TWITTER_CLIENT_SECRET="seu_client_secret"
-
-# URL do servidor (padrão: localhost para desenvolvimento)
-export SERIF_SH_URL="https://seu-dominio.com"
+python3 daily-post.py --test --quote 1
+# Saída: scripts/output/conselho-YYYY-MM-DD-1.png
 ```
 
-Para obter credenciais do Twitter:
-1. Acesse https://developer.twitter.com/
-2. Crie um projeto e app
-3. Configure OAuth 2.0 com "Read and Write" permissions
-4. Obtenha o Bearer Token ou Client ID/Secret
+---
 
-### Uso do Script
+## 🏗️ Arquitetura
+
+O projeto é dividido em duas partes:
+
+| Parte | Tecnologia | Função |
+|-------|-----------|--------|
+| `serif-sh/` | SvelteKit 5 + Tailwind v4 + Playwright | Web app para gerar imagens de quotes |
+| `scripts/` | Python 3 + requests | Automação diária de postagem no X |
+
+### Fluxo de dados
+
+```
+scripts/daily-post.py
+    ↓ HTTP GET
+erif-sh/src/routes/api/generate/+server.ts
+    ↓ Playwright Chromium
+serif-sh/src/routes/+page.svelte (renderizado com query params)
+    ↓ Screenshot .quote-frame
+    ↓ PNG retornado
+scripts/daily-post.py
+    ↓ POST api.x.com/2/tweets
+X (Twitter)
+```
+
+---
+
+## 📁 Estrutura do Projeto
+
+```
+pequeno-manual-tt/
+├── scripts/                          # Automação Python
+│   ├── daily-post.py                 # Script principal de postagem
+│   ├── generate-previews.py          # Geração em lote de previews
+│   ├── extract-conselhos.py          # Parser do markdown para JSON
+│   ├── requirements.txt              # Dependências: requests
+│   └── output/                       # Imagens geradas (gitignored)
+│
+├── serif-sh/                         # Web app SvelteKit
+│   ├── src/
+│   │   ├── lib/
+│   │   │   ├── components/           # Componentes Svelte
+│   │   │   │   ├── quote-frame.svelte    # Renderização das quotes
+│   │   │   │   ├── theme-selector.svelte
+│   │   │   │   └── icons/            # SVGs: marcas de citação, logos
+│   │   │   ├── stores/               # Stores Svelte com sync URL hash
+│   │   │   ├── utils/                # Client-side export (html-to-image)
+│   │   │   ├── themes.ts             # Definições de 10+ temas
+│   │   │   └── conselhos.json        # 1001 quotes do livro
+│   │   ├── routes/
+│   │   │   ├── +page.svelte        # Página principal (editor)
+│   │   │   └── api/
+│   │   │       └── generate/         # Endpoint Playwright (server-side PNG)
+│   │   └── app.css                   # Tailwind v4 @theme config
+│   └── static/                       # Fontes self-hosted (Instrument Serif, Open Runde)
+│
+├── Pequeno Manual de Instruções para a Vida.md   # Fonte original dos quotes
+├── CLAUDE.md                         # Instruções para Claude Code
+└── AGENTS.md                         # Documentação hierárquica para agentes AI
+```
+
+---
+
+## 🎨 Temas Disponíveis
+
+| Tema | Estilo | Uso recomendado |
+|------|--------|-----------------|
+| `noir` | Fundo preto, texto branco, aspas douradas | **Padrão para X** |
+| `editorial` | Jornalístico, serif, itálico | Clássico |
+| `breeze` | Card arredondado, leve | Moderno |
+| `aura` | Gradientes vibrantes | Chamativo |
+| `paper` | Textura de papel | Artesanal |
+| `glass` | Glassmorphism | Tecnológico |
+| `claude-code` | Terminal-style | Developer |
+| `vercel-dark/light` | Brand Vercel | Marca |
+| `peerlist-dark/light` | Brand Peerlist | Marca |
+| `x-dark/light` | Brand X (Twitter) | Marca |
+
+Temas são definidos em `serif-sh/src/lib/themes.ts`. Cada tema tem `quoteStyle` que determina o layout DOM completo em `quote-frame.svelte`.
+
+---
+
+## 🔌 API de Geração
+
+### `GET /api/generate`
+
+Gera imagem PNG server-side via Playwright.
+
+**Parâmetros (query string):**
+
+| Parâmetro | Tipo | Padrão | Descrição |
+|-----------|------|--------|-----------|
+| `quote` | string | — | Texto da citação |
+| `theme` | string | `noir` | ID do tema |
+| `author` | string | `H. Jackson Brown, Jr.` | Nome do autor |
+| `source` | string | `Pequeno Manual...` | Nome do livro |
+| `number` | int | — | Número da citação (exibe `001 / 1001`) |
+| `font` | string | — | Família de fonte (ex: `Playfair Display`) |
+| `align` | string | `center` | Alinhamento: `left`, `center`, `right` |
+| `padding` | int | `64` | Espaçamento interno em px |
+| `marks` | bool | `true` | Mostrar aspas decorativas |
+| `bg` | bool | `true` | Mostrar background |
+
+**Exemplo:**
+
+```bash
+curl "http://localhost:5173/api/generate?quote=Elogie%20três%20pessoas&theme=noir&number=1" \
+  -o conselho.png
+```
+
+**Retorno:** `image/png` (1200×630 viewport, screenshot de `.quote-frame`)
+
+---
+
+## 🔑 Variáveis de Ambiente
+
+| Variável | Obrigatório | Descrição |
+|----------|-------------|-----------|
+| `TWITTER_BEARER_TOKEN` | Sim | **OAuth 2.0 User Access Token** com escopo `tweet.write` |
+| `SERIF_SH_URL` | Não | URL do servidor (padrão: `http://localhost:5173`) |
+
+### Como obter o token
+
+1. Acesse [developer.x.com](https://developer.x.com/en/portal/projects-and-apps)
+2. Crie um app **dentro de um Project** (standalone não funciona)
+3. Ative **User Authentication** → OAuth 2.0 → Type: *Automated App*
+4. Callback URI: `http://localhost:3000/callback`
+5. Gere **OAuth 2.0 User Token** com scope `tweet.write`
+
+⚠️ **Limitação Free tier:** O plano Free tem praticamente zero créditos de escrita. Você provavelmente receberá erro `402 CreditsDepleted`. Opções:
+- Aguardar reset mensal (~dia 8)
+- Fazer upgrade para Basic ($100/mês)
+- Usar `--save-only` para apenas gerar imagens
+
+---
+
+## 🖥️ Uso do Script
 
 ```bash
 cd scripts
 
-# Postar o conselho do dia (baseado na data)
-python daily-post.py
+# Postar o conselho do dia (baseado no dia do ano, cíclico 1–1001)
+python3 daily-post.py
 
-# Testar sem postar (apenas gerar imagem)
-python daily-post.py --test
+# Testar sem postar — apenas gerar e salvar imagem
+python3 daily-post.py --test
 
-# Postar uma conselho específico
-python daily-post.py --quote 1
+# Postar conselho específico (1–1001)
+python3 daily-post.py --quote 42
 
-# Postar um conselho aleatório
-python daily-post.py --random
+# Postar conselho aleatório
+python3 daily-post.py --random
 
 # Usar tema diferente
-python daily-post.py --theme editorial
+python3 daily-post.py --theme editorial
 
-# Apenas salvar imagem (sem postar)
-python daily-post.py --save-only
+# Apenas salvar imagem, não postar
+python3 daily-post.py --save-only
 
 # Apontar para outro servidor
-python daily-post.py --url https://serif.sh.example.com
+python3 daily-post.py --url https://seu-dominio.com
 ```
 
-### Agendar Execução Diária
+---
 
-#### macOS (launchd)
+## ⏰ Automação Diária
 
-Crie `~/Library/LaunchAgents/com.conselho.daily.plist`:
+### macOS (launchd)
 
-```xml
+```bash
+# Criar plist
+mkdir -p ~/Library/LaunchAgents
+cat > ~/Library/LaunchAgents/com.conselho.daily.plist << 'EOF'
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -142,40 +238,35 @@ Crie `~/Library/LaunchAgents/com.conselho.daily.plist`:
     <key>ProgramArguments</key>
     <array>
         <string>/usr/bin/python3</string>
-        <string>/caminho/para/scripts/daily-post.py</string>
+        <string>/caminho/completo/scripts/daily-post.py</string>
     </array>
     <key>StartCalendarInterval</key>
     <dict>
-        <key>Hour</key>
-        <integer>9</integer>
-        <key>Minute</key>
-        <integer>0</integer>
+        <key>Hour</key><integer>9</integer>
+        <key>Minute</key><integer>0</integer>
     </dict>
     <key>EnvironmentVariables</key>
     <dict>
-        <key>TWITTER_BEARER_TOKEN</key>
-        <string>seu_token_aqui</string>
+        <key>TWITTER_BEARER_TOKEN</key><string>SEU_TOKEN_AQUI</string>
+        <key>SERIF_SH_URL</key><string>https://seu-dominio.com</string>
     </dict>
 </dict>
 </plist>
-```
+EOF
 
-```bash
+# Ativar
 launchctl load ~/Library/LaunchAgents/com.conselho.daily.plist
 ```
 
-#### Linux (cron)
+### Linux (cron)
 
 ```bash
 crontab -e
+# Adicione:
+0 9 * * * cd /caminho/para/pequeno-manual-tt/scripts && /usr/bin/python3 daily-post.py >> /var/log/conselho.log 2>&1
 ```
 
-Adicione:
-```
-0 9 * * * /usr/bin/python3 /caminho/para/scripts/daily-post.py >> /caminho/para/logs/daily-post.log 2>&1
-```
-
-#### GitHub Actions (alternativa gratuita)
+### GitHub Actions (gratuito)
 
 Crie `.github/workflows/daily-post.yml`:
 
@@ -184,7 +275,7 @@ name: Daily Quote Post
 
 on:
   schedule:
-    - cron: '0 12 * * *'  # 12:00 UTC daily
+    - cron: '0 12 * * *'  # 12:00 UTC
   workflow_dispatch:
 
 jobs:
@@ -192,70 +283,56 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-
-      - name: Install dependencies
-        run: pip install -r scripts/requirements.txt
-
-      - name: Post daily quote
+          python-version: '3.12'
+      - run: pip install -r scripts/requirements.txt
+      - run: python scripts/daily-post.py
         env:
           TWITTER_BEARER_TOKEN: ${{ secrets.TWITTER_BEARER_TOKEN }}
           SERIF_SH_URL: ${{ secrets.SERIF_SH_URL }}
-        run: python scripts/daily-post.py
 ```
 
-## Temas Disponíveis
+---
 
-Os temas são definidos em `serif-sh/src/lib/themes.ts`:
+## 🐛 Troubleshooting
 
-| Tema | Descrição |
-|------|-----------|
-| `vercel-dark` | Vercel Dark |
-| `vercel-light` | Vercel Light |
-| `peerlist-dark` | Peerlist Dark |
-| `peerlist-light` | Peerlist Light |
-| `x-dark` | X Dark |
-| `x-light` | X Light |
-| `editorial` | Editorial (padrão) |
-| `breeze` | Breeze |
-| `aura` | Aura |
-| `paper` | Paper |
-| `noir` | **Recomendado para X** - Noir |
-| `glass` | Glass |
-| `claude-code` | Claude Code |
+| Erro | Causa | Solução |
+|------|-------|---------|
+| `Quote frame not found` | Servidor não respondeu em 10s | Confirme que `npm run dev` está rodando |
+| `Failed to generate image` | Playwright não instalado | Execute `npx playwright install chromium` |
+| `401 Unauthorized` | Token inválido ou expirado | Regenere o OAuth 2.0 User Token no portal |
+| `403 client-not-enrolled` | App fora de um Project | Mova o app para dentro de um Project no portal |
+| `402 CreditsDepleted` | Free tier sem créditos de escrita | Upgrade para Basic ou aguarde reset mensal |
+| `Port already in use` | Outro processo na porta | Mude a porta: `npm run dev -- --port 5174` |
 
-## Fluxo de Funcionamento
+---
 
-1. **Escolha do conselho**: O script escolhe um conselho baseado na data (cíclico, garantia de usar todos os 1001 ao longo do ano)
+## 🛠️ Para Desenvolvedores
 
-2. **Geração da imagem**: O endpoint `/api/generate` usa Playwright para:
-   - Abrir a página com os parâmetros
-   - Renderizar o quote-frame
-   - Capturar como PNG
+### Arquitetura chave
 
-3. **Postagem**: O script posta no X (Twitter) com:
-   - Texto formatado
-   - Hashtag com número do conselho
-   - Imagem em anexo
+- **Dual URL state:** Hash base64 (UI compartilhável) vs query params (API)
+- **`setSilent()`:** Atualiza stores sem poluir a URL
+- **`editableStore`:** Action Svelte para `contenteditable` sem destruir cursor
+- **Server-side PNG:** Playwright headless screenshota `.quote-frame` com `viewport: {1200, 630}`
 
-## Troubleshooting
+Leia `CLAUDE.md` para instruções completas de desenvolvimento.
 
-### Erro: "Quote frame not found"
-- Verifique se o servidor está rodando
-- Verifique se a página carregou completamente (timeout de 10s)
+---
 
-### Erro: "Failed to generate image"
-- Verifique se o Playwright está instalado corretamente
-- Teste manualmente: `npx playwright install chromium`
+## 🤝 Contribuição
 
-### Erro: Twitter API 401
-- Verifique se o Bearer Token está correto
-- Verifique se o app tem permissões de escrita
+Pull requests são bem-vindos! Para mudanças significativas, abra uma issue primeiro para discutir o que você gostaria de alterar.
 
-### Erro: Twitter API 413
-- A imagem pode ser muito grande
-- Tente减小 padding ou usar viewport menor
+---
+
+## 📄 Licença
+
+[MIT](LICENSE) — Prof. Ramos
+
+---
+
+<div align="center">
+  Feito com ❤️ e mil conselhos
+</div>
